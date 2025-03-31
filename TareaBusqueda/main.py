@@ -27,6 +27,9 @@ def crear_estado_inicial():
     
     # Mezclamos las fichas
     random.shuffle(fichas_disponibles)
+
+    # Seleccionamos 4 columnas al azar para ser ocupadas (de las 6 disponibles)
+    columnas_ocupadas = random.sample(range(6), 4)
     
     # Inicializamos las 6 columnas vacías
     columnas = [[] for _ in range(6)]
@@ -34,7 +37,7 @@ def crear_estado_inicial():
     # Distribuimos las 16 fichas en las 6 columnas de forma aleatoria
     for ficha in fichas_disponibles:
         # Elegimos una columna aleatoria que no haya alcanzado el límite de 6 fichas
-        columna_idx = random.choice([i for i in range(6) if len(columnas[i]) < 6])
+        columna_idx = random.choice([col for col in columnas_ocupadas])
         columnas[columna_idx].append(ficha)
     
     return columnas
