@@ -1,7 +1,7 @@
 from collections import deque
 import copy
 
-# Función para imprimir matriz en un formato legible
+# Funcion para imprimir matriz en un formato legible
 def print_matrix(current_board):
     for row in current_board:
         print(" ".join(str(cell) if cell is not None else '.' for cell in row))
@@ -13,21 +13,20 @@ def search_nonheuristic_solution(initial_state):
     # Inicializar cola de soluciones a explorar
     frontier = deque([initial_state])
 
-    # Inicializar número de iteraciones
+    # Inicializar nï¿½mero de iteraciones
     iteration = 0
-    # Mientras a frontera no esté vacía
+    # Mientras a frontera no este vacia
     while frontier:
         # Se toma elemento a la izquierda de la cola
         current_state = frontier.popleft()
 
-        # Impresión de una iteración cada 500
+        # Impresion de una iteracion cada 500
         if iteration % 500 == 0:
-            # Print the iteration and matrix to the console
             print(f"Iteration: {iteration}")
             print_matrix(current_state)
             print(iteration)
         
-        # Se busca si el estado actual es solución
+        # Se busca si el estado actual es solucion
         if is_correct_state(current_state):
             print("Found it!")
             return current_state
@@ -38,22 +37,21 @@ def search_nonheuristic_solution(initial_state):
         # Se busca y devuelve los vecinos del estado actual
         neighbors = find_neighbors(current_state)
 
-        # Se busca en los vecinos y si no han sido explorados o no están en la frontera, se agregan
+        # Se busca en los vecinos y si no han sido explorados o no estï¿½n en la frontera, se agregan
         if neighbors:
             for neighbor in neighbors:
                 if tuple(map(tuple, neighbor)) not in explored and neighbor not in frontier:
                     frontier.append(neighbor)
         iteration += 1
 
-# Función para determinar si el estado es correcto
+# Funcion para determinar si el estado es correcto
 def is_correct_state(current_state):
-    # Contador de cantidad de columnas vacías
+    # Contador de cantidad de columnas vacï¿½as
     empty_columns = 0
-    # Lista no repetida de colores ya explorados para la solución
+    # Lista no repetida de colores ya explorados para la soluciï¿½n
     explored_colors = set(['G', 'Y', 'B', 'R'])
 
-    # Obtención de filas y columnas
-    rows = len(current_state)
+    # Obtencion de numero de columnas
     cols = len(current_state[0])
 
     # Se cicla por columna
@@ -66,11 +64,11 @@ def is_correct_state(current_state):
             if is_valid_column(current_state, i, current_state[5][i]) == False:
                 # No es valida
                 return False
-        # Si la base está vacía, significa que la columna también
+        # Si la base esta vacia, significa que la columna tambien
         elif current_state[5][i] is None:
             # Se incrementa contador en 1
             empty_columns += 1
-            # Se revisa si hay más de 2 columnas vacías
+            # Se revisa si hay mas de 2 columnas vacias
             if empty_columns > 2:
                 return False
         else:
@@ -79,15 +77,15 @@ def is_correct_state(current_state):
     return True
 
 def find_neighbors(resident_state):
-    # Inicialización de cola de vecinos
+    # Inicializacion de cola de vecinos
     neighbors = deque()
-    # Se inicializa lista de tuplas de celdas vacías validas
+    # Se inicializa lista de tuplas de celdas vacias validas
     valid_empty_cells = []
-    # Se inicializa lista de tuplas de colores a mover válidos
+    # Se inicializa lista de tuplas de colores a mover validos
     valid_color_cells = []
     
     # Iterar sobre cada columna para verificar su validez
-    valid_columns = [False] * len(resident_state[0])  # Lista que marca si una columna es válida o no
+    valid_columns = [False] * len(resident_state[0])  # Lista que marca si una columna es valida o no
     
     # Verificar la validez de cada columna
     for col in range(len(resident_state[0])):  # Itera sobre las columnas
@@ -98,26 +96,26 @@ def find_neighbors(resident_state):
     for i in range(len(resident_state)):
         # Se itera columna
         for j in range(len(resident_state[i])):
-            # Se revisa si la celda está vacía
+            # Se revisa si la celda estï¿½ vacï¿½a
             if resident_state[i][j] is None:
-                # Si es la última fila, la posición actual es válida
+                # Si es la ultima fila, la posiciï¿½n actual es valida
                 if i == (len(resident_state) - 1):
                     valid_empty_cells.append((i, j))
-                # Si la celda debajo no está vacía, es válida
+                # Si la celda debajo no estï¿½ vacï¿½a, es valida
                 elif resident_state[i+1][j] is not None:
                     valid_empty_cells.append((i, j))
             else:
                 if valid_columns[j] == False:
-                    # Si color está en el tope de la fila, se agrega
+                    # Si color esta en el tope de la fila, se agrega
                     if i == 0:
                         valid_color_cells.append((i, j))
-                    # Si color está en la 4ta fila y la celda de arriba está vacía
+                    # Si color esta en la 4ta fila y la celda de arriba estï¿½ vacï¿½a
                     elif i == 3 and resident_state[i - 1][j] is None:
-                        # Se revisa si no es una columna válida
+                        # Se revisa si no es una columna valida
                         if is_valid_column(resident_state, j, resident_state[i][j]) == False:
                             # Se agrega
                             valid_color_cells.append((i, j))
-                    # Si la celda de arriba es vacía
+                    # Si la celda de arriba es vacï¿½a
                     elif resident_state[i - 1][j] is None:
                         valid_color_cells.append((i, j))
 
@@ -131,7 +129,7 @@ def find_neighbors(resident_state):
 
     return neighbors
 
-# Función para revisar si la columna es una columna parte de una solución
+# Funcion para revisar si la columna es una columna parte de una soluciï¿½n
 def is_valid_column(matrix, col, color):
     # Se revisan celdas de abajo para arriba de col
     for index in range(5, 1, -1):
@@ -139,7 +137,7 @@ def is_valid_column(matrix, col, color):
         if matrix[index][col] != color:
             return False
 
-    # Si celda arriba del último supuesto color, no es valido
+    # Si celda arriba del ï¿½ltimo supuesto color, no es valido
     if matrix[1][col] is not None:
         return False
 

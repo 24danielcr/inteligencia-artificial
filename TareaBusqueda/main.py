@@ -4,12 +4,15 @@ import IDF
 
 import random
 
-correct_state = [[None, None, None, None, None, None],
-                 [None, None, None, None, None, None],
-                 ['Y', 'G', 'B', 'R', None, None],
-                 ['Y', 'B', 'G', 'R', None, None],
-                 ['Y', 'B', 'R', 'G', None, None],
-                 ['Y', 'B', 'R', 'G', None, None]]
+# Funcion que cambia lista de columnas a matriz 6x6, tambien rellena espacios vacios con None
+def convertir_a_matriz(columnas):
+    matriz = [[None for _ in range(6)] for _ in range(6)]
+
+    for col_idx, columna in enumerate(columnas):
+        for row_idx, ficha in enumerate(columna):
+            matriz[5 - row_idx][col_idx] = ficha
+
+    return matriz
 
 def crear_estado_inicial():
     """
@@ -55,9 +58,12 @@ def imprimir_estado(estado):
     # Imprimir los números de columna
     print(" 1  2  3  4  5  6 ")
 
-def busqueda_sin_heuristica():
-    solucion_sin_heristica = noHeuristica.search_nonheuristic_solution(correct_state)
-    print("Solution")
+def busqueda_sin_heuristica(estado_inicial):
+    inicio = time.time()
+    solucion_sin_heristica = noHeuristica.search_nonheuristic_solution(estado_inicial)
+    fin = time.time()
+    tiempo_total = fin - inicio  # Tiempo transcurrido en segundos
+    print(f"Solucion encontrada en {tiempo_total:.4f} segundos:")
     noHeuristica.print_matrix(solucion_sin_heristica)
 
 def opcion_2():
@@ -93,8 +99,9 @@ def busqueda_idf(estado_inicial):
     # Mostrar el tiempo total que tardó en encontrar la solución
     print(f"\nTiempo de ejecución: {tiempo_total:.4f} segundos.")
 
-def todas():
-    busqueda_sin_heuristica()
+def todas(estado_inicial):
+    busqueda_sin_heuristica(convertir_a_matriz(estado_inicial))
+    busqueda_idf()
 
 def salir():
     print("Saliendo del programa.")
@@ -120,16 +127,16 @@ def main():
             print()
 
             print(f"Estado inicial {numero_estado+1}:")
-            imprimir_estado(estados_iniciales[numero_estado])
+            imprimir_estado(estados_iniciales[numero_estado])   
 
             if user_choice == 1:
-                busqueda_sin_heuristica()
+                busqueda_sin_heuristica(convertir_a_matriz(estados_iniciales[numero_estado]))
             elif user_choice == 2:
                 opcion_2()
             elif user_choice == 3:
-                busqueda_idf(estados_iniciales[0])
+                busqueda_idf(estados_iniciales[numero_estado])
             elif user_choice == 4:
-                todas()
+                todas(estados_iniciales[numero_estado])
             elif user_choice == 5:
                 salir()
             else:
