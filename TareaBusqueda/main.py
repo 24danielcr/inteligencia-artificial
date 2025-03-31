@@ -1,3 +1,4 @@
+import time
 import noHeuristica
 import IDF
 
@@ -38,8 +39,8 @@ def crear_estado_inicial():
 def imprimir_estado(estado):
     """Imprime el estado actual del tablero"""
     # Encontrar la altura máxima
-    max_altura = max((len(col) for col in estado), default=0)
-    
+    max_altura = len(estado)
+
     # Imprimir el tablero de arriba hacia abajo
     for i in range(max_altura-1, -1, -1):
         fila = ""
@@ -62,11 +63,35 @@ def busqueda_sin_heuristica():
 def opcion_2():
     print("Opcion2")
 
-def opcion_3():
-    print("Opcion3")
+def busqueda_idf(estado_inicial):
+    estado_inicial = IDF.Estado(estado_inicial)
 
-def opcion_4():
-    print("Opcion4")
+    # Medir el tiempo antes de la búsqueda
+    inicio = time.time()
+    
+    # Buscar solución sin límite de tiempo
+    solucion = IDF.idf_star(estado_inicial)
+    
+    # Medir el tiempo después de la búsqueda
+    fin = time.time()
+    
+    tiempo_total = fin - inicio  # Tiempo transcurrido en segundos
+    
+    if solucion:
+        print(f"\n¡Solución encontrada en {len(solucion.movimientos)} movimientos!")
+        
+        # Mostrar los movimientos
+        print("\nSecuencia de movimientos:")
+        for i, mov in enumerate(solucion.movimientos):
+            print(f"Paso {i+1}: {mov}")
+        
+        print("\nEstado final:")
+        imprimir_estado(solucion.columnas)
+    else:
+        print(f"\nNo se encontró solución.")
+    
+    # Mostrar el tiempo total que tardó en encontrar la solución
+    print(f"\nTiempo de ejecución: {tiempo_total:.4f} segundos.")
 
 def todas():
     busqueda_sin_heuristica()
@@ -76,34 +101,45 @@ def salir():
     exit()
 
 def main():
-    while True:
+    # Crear estados iniciales
+    estados_iniciales = []
+    for i in range(10):
+      estados_iniciales.append(crear_estado_inicial())
+
+    numero_estado = 0
+    while numero_estado < len(estados_iniciales):
         print("\nPor favor seleccione un metodo de busqueda:")
         print("1. Busqueda sin Heuristica con Lista Abierta y Lista Cerrada")
         print("2. Opcion 2")
         print("3. IDF*")
-        print("4. Opcion 4")
-        print("5. Opcion 5")
-        print("6. Salir")
+        print("4. Todas juntas")
+        print("5. Salir")
 
         try:
             user_choice = int(input("Seleccione una opcion (1-6): "))
+            print()
+
+            print(f"Estado inicial {numero_estado+1}:")
+            imprimir_estado(estados_iniciales[numero_estado])
 
             if user_choice == 1:
                 busqueda_sin_heuristica()
             elif user_choice == 2:
                 opcion_2()
             elif user_choice == 3:
-                opcion_3()
+                busqueda_idf(estados_iniciales[0])
             elif user_choice == 4:
-                opcion_4()
-            elif user_choice == 5:
                 todas()
-            elif user_choice == 6:
+            elif user_choice == 5:
                 salir()
             else:
                 print("Invalid choice, please choose a number between 1 and 6.")
+
+            numero_estado += 1
         except ValueError:
             print("Invalid input, please enter a number between 1 and 6.")
+        except MemoryError as e:
+            print("Memory out of bounds:",e)
 
 if __name__ == "__main__":
     main()
