@@ -1,6 +1,8 @@
 import random
+import time  # Importar el módulo time
 
 class Estado:
+    
     def __init__(self, columnas, movimientos=None):
         # Lista de columnas, cada columna es una lista de fichas (caracteres)
         self.columnas = columnas
@@ -166,18 +168,20 @@ def idf_star(estado_inicial):
         limite_profundidad += 1
 
 
-
-def busqueda_profundidad_limitada(estado, limite, profundidad=1, nodos_visitados=0, max_nodos=100000):
+nodos_visitados_global = 0
+def busqueda_profundidad_limitada(estado, limite, profundidad=1, max_nodos=100000):
     """
     Función recursiva para implementar la búsqueda en profundidad limitada
     """
-    nodos_visitados += 1
+    global nodos_visitados_global
+    nodos_visitados_global += 1
 
-    if nodos_visitados > max_nodos:
+    if nodos_visitados_global > max_nodos:
         return None
     
     # Si el estado actual es la solución, retornamos los movimientos
     if estado.es_solucion():
+        print(f"Nodos explorados: {nodos_visitados_global}")
         return estado
     
     # Si hemos alcanzado el límite de profundidad, retornamos None
@@ -196,7 +200,7 @@ def busqueda_profundidad_limitada(estado, limite, profundidad=1, nodos_visitados
         # Solo exploramos si f(n) <= límite
         if f_sucesor <= limite:
             # Llamada recursiva
-            resultado = busqueda_profundidad_limitada(sucesor, limite, profundidad + 1, nodos_visitados, max_nodos)
+            resultado = busqueda_profundidad_limitada(sucesor, limite, profundidad + 1, max_nodos)
             
             # Si encontramos una solución, la devolvemos
             if resultado:
@@ -261,8 +265,16 @@ if __name__ == "__main__":
         print("Estado inicial:")
         imprimir_estado(estado_inicial)
         
+        # Medir el tiempo antes de la búsqueda
+        inicio = time.time()
+        
         # Buscar solución sin límite de tiempo
         solucion = idf_star(estado_inicial)
+        
+        # Medir el tiempo después de la búsqueda
+        fin = time.time()
+        
+        tiempo_total = fin - inicio  # Tiempo transcurrido en segundos
         
         if solucion:
             print(f"\n¡Solución encontrada en {len(solucion.movimientos)} movimientos!")
@@ -276,3 +288,6 @@ if __name__ == "__main__":
             imprimir_estado(solucion)
         else:
             print(f"\nNo se encontró solución.")
+        
+        # Mostrar el tiempo total que tardó en encontrar la solución
+        print(f"\nTiempo de ejecución: {tiempo_total:.4f} segundos.")
