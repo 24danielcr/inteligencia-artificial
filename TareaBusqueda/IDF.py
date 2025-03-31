@@ -48,37 +48,51 @@ class Estado:
         Calcula un valor heurístico que estima la distancia a la solución.
         Un valor menor indica un estado más cercano a la solución.
         """
-        # Contamos fichas mal colocadas y grupos incompletos
-        h = 0
-        
         # Diccionario para contar cuántas fichas de cada color hay en cada columna
         conteo = {}
         
+        # Colores disponibles
+        colores = ['R', 'G', 'Y', 'B']
+        
         # Para cada columna
         for i, columna in enumerate(self.columnas):
-            if not columna:
-                continue
-            
-            # Contamos cuántas fichas de cada color hay en esta columna
             for ficha in columna:
                 if (i, ficha) not in conteo:
                     conteo[(i, ficha)] = 0
                 conteo[(i, ficha)] += 1
         
-        """Conteo heuristico para dar un limite de profundidad"""
-        # Evaluamos cuántas fichas están mal colocadas
-        for (col, color), cantidad in conteo.items():
-            # Si hay menos de 4 fichas de este color en esta columna,
-            # significa que o bien hay que mover estas fichas a otra columna,
-            # o bien hay que traer más fichas a esta columna
-            if cantidad < 4:
-                # Calculamos cuántas fichas debemos mover (como mínimo)
-                h += 4 - cantidad
+        # Inicializamos el valor heurístico
+        h = 0
+        
+        # Penalización por fichas mal colocadas
+        for i, columna in enumerate(self.columnas):
+            if not columna:
+                continue
             
-            # Si hay fichas de diferentes colores en la misma columna
-            otras_fichas = sum(conteo.get((col, c), 0) for c in ['R', 'G', 'Y', 'B'] if c != color)
-            if otras_fichas > 0:
-                h += otras_fichas
+            # Contamos cuántos colores diferentes hay en la columna
+            colores_en_columna = set(columna)
+            
+            # Si hay más de un color en la columna, hay que mover fichas
+            if len(colores_en_columna) > 1:
+                # Encontramos el color mayoritario
+                color_mayoritario = max(colores_en_columna, key=lambda c: columna.count(c))
+                # Penalizamos por cada ficha que no sea del color mayoritario
+                h += sum(1 for ficha in columna if ficha != color_mayoritario)
+            
+            # Si hay menos de 4 fichas del mismo color, necesitamos traer más
+            if len(columna) == 4 and len(colores_en_columna) == 1:
+                # Esta columna ya está bien formada, no penalizar
+                pass
+            else:
+                # Penalizar por la diferencia hasta completar 4 fichas del mismo color
+                h += 1
+        
+        # Penalización por colores dispersos
+        for color in colores:
+            # Contar en cuántas columnas diferentes está presente este color
+            columnas_con_color = set(i for (i, c), _ in conteo.items() if c == color)
+            # Penalizar por dispersión (si está en más de una columna)
+            h += len(columnas_con_color) - 1 if columnas_con_color else 0
         
         return h
     
@@ -99,8 +113,18 @@ class Estado:
                 if i == j:  # No tiene sentido mover a la misma columna
                     continue
                 
-                # Verificar si se puede colocar la ficha en la columna destino
-                if not columna_destino or columna_destino[-1] == ficha:
+                # Verificar que la columna destino no supere el límite de 6 fichas
+                if len(columna_destino) >= 6:
+                    continue  # Salta esta columna y busca otra
+                
+                # Regla 1: Solo se puede mover a una columna vacía
+                # Regla 2: Solo se puede mover a una columna cuya ficha superior sea del mismo color
+                # Regla 3: Si la columna origen solo tiene una ficha de un color, no la movemos a una columna vacía
+                if (not columna_destino) or (columna_destino and columna_destino[-1] == ficha):
+                    # Evitar movimientos inútiles: no mover la única ficha a una columna vacía
+                    if not columna_destino and len(columna_origen) == 1:
+                        continue
+                    
                     # Crear un nuevo estado moviendo la ficha
                     nuevo_estado = self.copia()
                     nuevo_estado.columnas[i] = nuevo_estado.columnas[i][:-1]  # Quitar la ficha de la columna origen
@@ -111,11 +135,12 @@ class Estado:
                     nuevo_estado.movimientos.append(nuevo_movimiento)
                     
                     sucesores.append(nuevo_estado)
-        
+
         # Ordenamos los sucesores por su valor heurístico (de menor a mayor)
         sucesores.sort(key=lambda estado: estado.calcular_heuristica())
-        
+
         return sucesores
+
 
 def idf_star(estado_inicial):
     """
@@ -123,32 +148,41 @@ def idf_star(estado_inicial):
     - Búsqueda en profundidad iterativa con límite de profundidad basado en heurística
     - No almacena estados previos (exploración en caliente)
     """
-    # Límite de profundidad inicial basado en la heurística
+    # Establecer el límite de profundidad inicial basado en la heurística
     limite_profundidad = estado_inicial.calcular_heuristica()
     
-    print(f"Límite de profundidad: {limite_profundidad}")
+    print(f"Límite de profundidad inicial: {limite_profundidad}")
     
-    # Llamamos a la búsqueda en profundidad limitada
-    solucion = busqueda_profundidad_limitada(estado_inicial, limite_profundidad, )
-    
-    # Si encontramos una solución, la devolvemos
-    if solucion:
-        return solucion
-    
-    # Si no encontramos solución después de max_iteraciones
-    return None
+    while True:
+        # Llamamos a la búsqueda en profundidad limitada con el límite actual
+        solucion = busqueda_profundidad_limitada(estado_inicial, limite_profundidad)
+        
+        # Si encontramos la solución, la devolvemos
+        if solucion:
+            return solucion
+        
+        # Si no se encuentra solución en esta iteración, incrementamos el límite de profundidad
+        print(f"No se encontró solución en el límite {limite_profundidad}. Incrementando límite.")
+        limite_profundidad += 1
 
-def busqueda_profundidad_limitada(estado, limite, profundidad=1):
+
+
+def busqueda_profundidad_limitada(estado, limite, profundidad=1, nodos_visitados=0, max_nodos=100000):
     """
     Función recursiva para implementar la búsqueda en profundidad limitada
     """
-    # Si hemos alcanzado el límite de profundidad, retornamos None
-    if profundidad > limite:
+    nodos_visitados += 1
+
+    if nodos_visitados > max_nodos:
         return None
     
     # Si el estado actual es la solución, retornamos los movimientos
     if estado.es_solucion():
         return estado
+    
+    # Si hemos alcanzado el límite de profundidad, retornamos None
+    if profundidad > limite:
+        return None
     
     # Generamos los sucesores (ya ordenados por heurística)
     sucesores = estado.generar_sucesores()
@@ -162,19 +196,19 @@ def busqueda_profundidad_limitada(estado, limite, profundidad=1):
         # Solo exploramos si f(n) <= límite
         if f_sucesor <= limite:
             # Llamada recursiva
-          resultado = busqueda_profundidad_limitada(sucesor, limite, profundidad + 1)
-          
-          # Si encontramos una solución, la devolvemos
-          if resultado:
-              return resultado
+            resultado = busqueda_profundidad_limitada(sucesor, limite, profundidad + 1, nodos_visitados, max_nodos)
+            
+            # Si encontramos una solución, la devolvemos
+            if resultado:
+                return resultado
     
     # Si no encontramos solución en este camino
     return None
 
 def crear_estado_inicial():
     """
-    Crea un estado inicial aleatorio con 4 columnas ocupadas y 2 vacías,
-    distribuyendo 4 fichas de cada color (R, G, Y, B) de manera aleatoria.
+    Crea un estado inicial aleatorio con 6 columnas, asegurando que cada columna
+    tenga como máximo 6 fichas y se distribuyan las 16 fichas disponibles (4 por cada color).
     """
     # Creamos la lista de todas las fichas disponibles
     fichas_disponibles = ['R', 'R', 'R', 'R',  # 4 fichas rojas
@@ -185,24 +219,22 @@ def crear_estado_inicial():
     # Mezclamos las fichas
     random.shuffle(fichas_disponibles)
     
-    # Seleccionamos 4 columnas al azar para ser ocupadas (de las 6 disponibles)
-    columnas_ocupadas = random.sample(range(6), 4)
-    
     # Inicializamos las 6 columnas vacías
     columnas = [[] for _ in range(6)]
     
-    # Distribuimos las fichas aleatoriamente entre las columnas seleccionadas
+    # Distribuimos las 16 fichas en las 6 columnas de forma aleatoria
     for ficha in fichas_disponibles:
-        # Elegimos aleatoriamente una de las 4 columnas ocupadas
-        columna_idx = random.choice(columnas_ocupadas)
+        # Elegimos una columna aleatoria que no haya alcanzado el límite de 6 fichas
+        columna_idx = random.choice([i for i in range(6) if len(columnas[i]) < 6])
         columnas[columna_idx].append(ficha)
     
     return Estado(columnas)
 
+
 def imprimir_estado(estado):
     """Imprime el estado actual del tablero"""
     # Encontrar la altura máxima
-    max_altura = len(estado.columnas)
+    max_altura = max((len(col) for col in estado.columnas), default=0)
     
     # Imprimir el tablero de arriba hacia abajo
     for i in range(max_altura-1, -1, -1):
@@ -220,23 +252,27 @@ def imprimir_estado(estado):
 
 # Ejemplo de uso
 if __name__ == "__main__":
-    print("Problema de ordenamiento de colores - IDF*")
-    print()
 
-    for n in range(1,11):
-      estado_inicial = crear_estado_inicial()
-      print(f"{n}. Estado inicial:")
-      imprimir_estado(estado_inicial)
-      
-      solucion = idf_star(estado_inicial)
-      
-      if solucion:
-          print()
-          print(f"¡Solución encontrada en {len(solucion.movimientos)} movimientos!")
-          #for i, mov in enumerate(solucion):
-          #    print(f"Paso {i+1}: {mov}")
-          #imprimir_estado(solucion)
-      else:
-          print("No se encontró solución.")
-
-      print()
+    for n in range(1, 6):  # Reducido a 5 intentos para ahorrar tiempo
+        print(f"\nPrueba {n}:")
+        
+        # Crear estado inicial aleatorio
+        estado_inicial = crear_estado_inicial()
+        print("Estado inicial:")
+        imprimir_estado(estado_inicial)
+        
+        # Buscar solución sin límite de tiempo
+        solucion = idf_star(estado_inicial)
+        
+        if solucion:
+            print(f"\n¡Solución encontrada en {len(solucion.movimientos)} movimientos!")
+            
+            # Mostrar los movimientos
+            print("\nSecuencia de movimientos:")
+            for i, mov in enumerate(solucion.movimientos):
+                print(f"Paso {i+1}: {mov}")
+            
+            print("\nEstado final:")
+            imprimir_estado(solucion)
+        else:
+            print(f"\nNo se encontró solución.")
