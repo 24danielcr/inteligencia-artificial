@@ -59,6 +59,7 @@ class Estado:
             if not columna:
                 continue
             
+            incorrectas = 0
             # Contamos cuántas fichas de cada color hay en esta columna
             for ficha in columna:
                 if (i, ficha) not in conteo:
@@ -69,11 +70,9 @@ class Estado:
         # Evaluamos cuántas fichas están mal colocadas
         for (col, color), cantidad in conteo.items():
             # Si hay menos de 4 fichas de este color en esta columna,
-            # significa que o bien hay que mover estas fichas a otra columna,
-            # o bien hay que traer más fichas a esta columna
+            # significa que esas fichas estan mal
             if cantidad < 4:
-                # Calculamos cuántas fichas debemos mover (como mínimo)
-                h += 4 - cantidad
+                h += cantidad
             
             # Si hay fichas de diferentes colores en la misma columna
             otras_fichas = sum(conteo.get((col, c), 0) for c in ['R', 'G', 'Y', 'B'] if c != color)
