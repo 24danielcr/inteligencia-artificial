@@ -69,8 +69,8 @@ def busqueda_sin_heuristica(estado_inicial):
     print(f"Solucion encontrada en {tiempo_total:.4f} segundos:")
     noHeuristica.print_matrix(solucion_sin_heristica)
 
-def opcion_2():
-    print("Opcion2")
+def heuristic_search(initial_state):
+    print("\n")
 
 def busqueda_idf(estado_inicial):
     estado_inicial = IDF.Estado(estado_inicial)
@@ -104,7 +104,8 @@ def busqueda_idf(estado_inicial):
 
 def todas(estado_inicial):
     busqueda_sin_heuristica(convertir_a_matriz(estado_inicial))
-    busqueda_idf()
+    heuristic_search(estado_inicial)
+    busqueda_idf(estado_inicial)
 
 def salir():
     print("Saliendo del programa.")
@@ -114,13 +115,13 @@ def main():
     # Crear estados iniciales
     estados_iniciales = []
     for i in range(10):
-      estados_iniciales.append(crear_estado_inicial())
+        estados_iniciales.append(crear_estado_inicial())
 
     numero_estado = 0
     while numero_estado < len(estados_iniciales):
         print("\nPor favor seleccione un metodo de busqueda:")
         print("1. Busqueda sin Heuristica con Lista Abierta y Lista Cerrada")
-        print("2. Opcion 2")
+        print("2. Búsqueda por A*")
         print("3. IDF*")
         print("4. Todas juntas")
         print("5. Salir")
@@ -135,7 +136,7 @@ def main():
             if user_choice == 1:
                 busqueda_sin_heuristica(convertir_a_matriz(estados_iniciales[numero_estado]))
             elif user_choice == 2:
-                opcion_2()
+                heuristic_search(estados_iniciales[numero_estado])
             elif user_choice == 3:
                 busqueda_idf(estados_iniciales[numero_estado])
             elif user_choice == 4:
