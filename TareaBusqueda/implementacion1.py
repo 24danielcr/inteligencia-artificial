@@ -12,12 +12,12 @@ initial_state = [[EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
                  [YELLOW, GREEN, GREEN, GREEN, EMPTY, EMPTY],
                  [BLUE, RED, RED, RED, EMPTY, EMPTY],
                  [BLUE, YELLOW, YELLOW, BLUE, EMPTY, EMPTY],
-                 [RED, GREEN, YELLOW, BLUE, EMPTY, EMPTY]];
+                 [RED, GREEN, YELLOW, BLUE, EMPTY, EMPTY]]
 
 correct_state = [[EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
                  [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-                 [RED, RED, GREEN, BLUE, EMPTY, EMPTY],
-                 [YELLOW, YELLOW, GREEN, BLUE, EMPTY, EMPTY],
+                 [YELLOW, RED, GREEN, BLUE, EMPTY, EMPTY],
+                 [YELLOW, RED, GREEN, BLUE, EMPTY, EMPTY],
                  [YELLOW, RED, GREEN, BLUE, EMPTY, EMPTY],
                  [YELLOW, RED, GREEN, BLUE, EMPTY, EMPTY]]
 
