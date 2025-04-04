@@ -1,5 +1,5 @@
 import random
-import time  # Importar el módulo time
+import time
 
 class Estado:
     
@@ -137,74 +137,86 @@ class Estado:
                     nuevo_estado.movimientos.append(nuevo_movimiento)
                     
                     sucesores.append(nuevo_estado)
-
-        # Ordenamos los sucesores por su valor heurístico (de menor a mayor)
-        sucesores.sort(key=lambda estado: estado.calcular_heuristica())
+        
+        # Ordeno sucesores segun heuristica para encontrar más rapido la soluciuón
+        sucesores.sort(key=lambda s: s.calcular_heuristica())
 
         return sucesores
 
 
-def idf_star(estado_inicial):
+def ids_con_heuristica(estado_inicial):
     """
-    Implementa el algoritmo IDF* (Iterative Deepening F*)
-    - Búsqueda en profundidad iterativa con límite de profundidad basado en heurística
+    Implementa un algoritmo IDS con límite inicial basado en heurística
+    - La profundidad máxima en cada iteración se basa en la heurística inicial
     - No almacena estados previos (exploración en caliente)
     """
     # Establecer el límite de profundidad inicial basado en la heurística
     limite_profundidad = estado_inicial.calcular_heuristica()
+    print(f"Límite de profundidad inicial dado por la Heurística: {limite_profundidad}")
     
-    print(f"Límite de profundidad inicial: {limite_profundidad}")
-    
-    while True:
-        # Llamamos a la búsqueda en profundidad limitada con el límite actual
-        solucion = busqueda_profundidad_limitada(estado_inicial, limite_profundidad)
-        
-        # Si encontramos la solución, la devolvemos
-        if solucion:
-            return solucion
-        
-        # Si no se encuentra solución en esta iteración, incrementamos el límite de profundidad
-        print(f"No se encontró solución en el límite {limite_profundidad}. Incrementando límite.")
-        limite_profundidad += 1
+    # Establecemos un contador de nodos
+    global nodos_visitados_global
+    global heuristica
+
+    for limite in range(1, limite_profundidad + 1):
+      nodos_visitados_global = 0
+      heuristica = limite_profundidad
+      
+      # Llamamos a la búsqueda en profundidad limitada por la heuristica
+      solucion = busqueda_profundidad_limitada(estado_inicial, limite)
+      
+      # Si encontramos la solución, la devolvemos
+      if solucion:
+          print(f"¡Solución encontrada en la profundidad {len(solucion.movimientos)}!")
+          return solucion
+
+      # Si no se encuentra solución en esta iteración, incrementamos el límite de profundidad
+      print(f"No se encontró solución en el límite {limite}. Nodos explorados: {nodos_visitados_global}")
+
+    return None  # No se encontró solución
 
 
-nodos_visitados_global = 0
-def busqueda_profundidad_limitada(estado, limite, profundidad=1, max_nodos=100000):
+
+def busqueda_profundidad_limitada(estado, limite, profundidad=0):
     """
     Función recursiva para implementar la búsqueda en profundidad limitada
     """
     global nodos_visitados_global
     nodos_visitados_global += 1
-
-    if nodos_visitados_global > max_nodos:
-        return None
     
     # Si el estado actual es la solución, retornamos los movimientos
     if estado.es_solucion():
-        print(f"Nodos explorados: {nodos_visitados_global}")
+        print(f"¡Solución encontrada! Nodos explorados: {nodos_visitados_global}")
         return estado
     
     # Si hemos alcanzado el límite de profundidad, retornamos None
-    if profundidad > limite:
+    if profundidad >= limite:
         return None
     
-    # Generamos los sucesores (ya ordenados por heurística)
+    # Generamos los sucesores
     sucesores = estado.generar_sucesores()
     
-    # Exploramos cada sucesor en orden de mejor heurística
+    # Calcular la heurística para ver si voy en buen camino
+    '''
+    mejor_h = float('inf')
+    for s in sucesores: # Obtenemos la mejor euristica de los sucesores
+        h = s.calcular_heuristica()
+        mejor_h = min(mejor_h, h)
+    
+    global heuristica
+    if mejor_h < heuristica :
+        heuristica = mejor_h
+        print(f"Profundidad: {profundidad}, Mejor heutistica de sucesores: {mejor_h}, Nodos visitados: {nodos_visitados_global}")
+    '''
+    
+    # Exploramos cada sucesor
     for sucesor in sucesores:
-        # La función f(n) en A* es g(n) + h(n)
-        # Aquí, g(n) es la profundidad actual y h(n) es la heurística
-        f_sucesor = profundidad + sucesor.calcular_heuristica()
+        # Llamada recursiva con incremento de profundidad estándar
+        resultado = busqueda_profundidad_limitada(sucesor, limite, profundidad + 1)
         
-        # Solo exploramos si f(n) <= límite
-        if f_sucesor <= limite:
-            # Llamada recursiva
-            resultado = busqueda_profundidad_limitada(sucesor, limite, profundidad + 1, max_nodos)
-            
-            # Si encontramos una solución, la devolvemos
-            if resultado:
-                return resultado
+        # Si encontramos una solución, la devolvemos
+        if resultado:
+            return resultado
     
     # Si no encontramos solución en este camino
     return None

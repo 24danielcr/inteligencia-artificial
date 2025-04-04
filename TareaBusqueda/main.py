@@ -1,6 +1,6 @@
 import time
 import noHeuristica
-import IDF
+import IDS
 
 import random
 
@@ -77,14 +77,14 @@ def busqueda_sin_heuristica(estado_inicial):
 def heuristic_search(initial_state):
     print("\n")
 
-def busqueda_idf(estado_inicial):
-    estado_inicial = IDF.Estado(estado_inicial)
+def busqueda_ids(estado_inicial):
+    estado_inicial = IDS.Estado(estado_inicial)
 
     # Medir el tiempo antes de la búsqueda
     inicio = time.time()
     
     # Buscar solución sin límite de tiempo
-    solucion = IDF.idf_star(estado_inicial)
+    solucion = IDS.ids_con_heuristica(estado_inicial)
     
     # Medir el tiempo después de la búsqueda
     fin = time.time()
@@ -92,10 +92,9 @@ def busqueda_idf(estado_inicial):
     tiempo_total = fin - inicio  # Tiempo transcurrido en segundos
     
     if solucion:
-        print(f"\n¡Solución encontrada en {len(solucion.movimientos)} movimientos!")
+        print(f"{len(solucion.movimientos)} movimientos de la solucion:")
         
         # Mostrar los movimientos
-        print("\nSecuencia de movimientos:")
         for i, mov in enumerate(solucion.movimientos):
             print(f"Paso {i+1}: {mov}")
         
@@ -110,7 +109,7 @@ def busqueda_idf(estado_inicial):
 def todas(estado_inicial):
     busqueda_sin_heuristica(convertir_a_matriz(estado_inicial))
     heuristic_search(estado_inicial)
-    busqueda_idf(estado_inicial)
+    busqueda_ids(estado_inicial)
 
 def salir():
     print("Saliendo del programa.")
@@ -127,13 +126,18 @@ def main():
         print("\nPor favor seleccione un metodo de busqueda:")
         print("1. Busqueda sin Heuristica con Lista Abierta y Lista Cerrada")
         print("2. Búsqueda por A*")
-        print("3. IDF*")
+        print("3. IDS con heuristica")
         print("4. Todas juntas")
         print("5. Salir")
 
         try:
             user_choice = int(input("Seleccione una opcion (1-6): "))
             print()
+
+            if user_choice == 5:
+                salir()
+            elif user_choice > 5 or user_choice < 1 :
+                print("Invalid choice, please choose a number between 1 and 6.")
 
             print(f"Estado inicial {numero_estado+1}:")
             imprimir_estado(estados_iniciales[numero_estado])   
@@ -143,13 +147,9 @@ def main():
             elif user_choice == 2:
                 heuristic_search(estados_iniciales[numero_estado])
             elif user_choice == 3:
-                busqueda_idf(estados_iniciales[numero_estado])
+                busqueda_ids(estados_iniciales[numero_estado])
             elif user_choice == 4:
                 todas(estados_iniciales[numero_estado])
-            elif user_choice == 5:
-                salir()
-            else:
-                print("Invalid choice, please choose a number between 1 and 6.")
 
             numero_estado += 1
         except ValueError:
