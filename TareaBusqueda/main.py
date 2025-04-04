@@ -102,6 +102,9 @@ def busqueda_ids(estado_inicial):
     # Medir el tiempo antes de la búsqueda
     inicio = time.time()
     
+    max_nodos = 200000
+    print(f"Busqueda IDS* ocn limite dado por la heuristica, con limite de nodos explorados de: {max_nodos}.")
+
     # Buscar solución sin límite de tiempo
     solucion = IDS.ids_con_heuristica(estado_inicial)
     
@@ -111,7 +114,7 @@ def busqueda_ids(estado_inicial):
     tiempo_total = fin - inicio  # Tiempo transcurrido en segundos
     
     if solucion:
-        print(f"{len(solucion.movimientos)} movimientos de la solucion:")
+        print(f"Vea los {len(solucion.movimientos)} movimientos de la solucion:")
         
         # Mostrar los movimientos
         for i, mov in enumerate(solucion.movimientos):
