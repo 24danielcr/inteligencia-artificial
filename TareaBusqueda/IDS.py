@@ -144,14 +144,14 @@ class Estado:
         return sucesores
 
 
-def ids_con_heuristica(estado_inicial):
+def ids_con_heuristica(estado_inicial, max_nodos=200000):
     """
     Implementa un algoritmo IDS con límite inicial basado en heurística
     - La profundidad máxima en cada iteración se basa en la heurística inicial
     - No almacena estados previos (exploración en caliente)
     """
     # Establecer el límite de profundidad inicial basado en la heurística
-    limite_profundidad = estado_inicial.calcular_heuristica()
+    limite_profundidad = estado_inicial.calcular_heuristica() + 2
     print(f"Límite de profundidad inicial dado por la Heurística: {limite_profundidad}")
     
     # Establecemos un contador de nodos
@@ -163,7 +163,7 @@ def ids_con_heuristica(estado_inicial):
       heuristica = limite_profundidad
       
       # Llamamos a la búsqueda en profundidad limitada por la heuristica
-      solucion = busqueda_profundidad_limitada(estado_inicial, limite)
+      solucion = busqueda_profundidad_limitada(estado_inicial, limite, max_nodos)
       
       # Si encontramos la solución, la devolvemos
       if solucion:
@@ -176,23 +176,24 @@ def ids_con_heuristica(estado_inicial):
 
 
 
-def busqueda_profundidad_limitada(estado, limite, profundidad=0):
+def busqueda_profundidad_limitada(estado, limite, profundidad=1, max_nodos=200000):
     """
     Función recursiva para implementar la búsqueda en profundidad limitada
     """
     global nodos_visitados_global
     nodos_visitados_global += 1
     
+    # Si hemos alcanzado el límite de profundidad, retornamos None
+    if profundidad > limite:
+        return None
+    
     # Si el estado actual es la solución, retornamos los movimientos
     if estado.es_solucion():
         print(f"¡Solución encontrada en la profundidad {profundidad}! Nodos explorados: {nodos_visitados_global}")
         return estado
     
-    # Si hemos alcanzado el límite de profundidad, retornamos None
-    if profundidad > limite:
-        return None
-    
-    if nodos_visitados_global > 100000 : 
+    # Limite de nodos visitados
+    if nodos_visitados_global > max_nodos : 
         return None
 
     # Generamos los sucesores
@@ -214,7 +215,7 @@ def busqueda_profundidad_limitada(estado, limite, profundidad=0):
     # Exploramos cada sucesor
     for sucesor in sucesores:
         # Llamada recursiva con incremento de profundidad estándar
-        resultado = busqueda_profundidad_limitada(sucesor, limite, profundidad + 1)
+        resultado = busqueda_profundidad_limitada(sucesor, limite, profundidad + 1, max_nodos)
         
         # Si encontramos una solución, la devolvemos
         if resultado:
