@@ -1,5 +1,6 @@
 from collections import deque
 import copy
+import sys
 
 # Funcion para imprimir matriz en un formato legible
 def print_matrix(current_board):
@@ -26,6 +27,7 @@ def search_nonheuristic_solution(initial_state):
         if is_correct_state(current_state):
             print("Found Solution!\n")
             solution_path = reconstruct_path(current_state, parent_map)
+            mem_used(frontier, explored)
             return solution_path
 
         explored.add(tuple(map(tuple, current_state)))
@@ -170,3 +172,13 @@ def is_valid_column(matrix, col, color):
         return False
 
     return True
+
+# Funcion para obtener la memorio total utilizada por lista abierta y lista cerrada
+def mem_used(frontier, explored):
+    frontier_size = sys.getsizeof(frontier) + sum(sys.getsizeof(state) for state in frontier)
+    explored_size = sys.getsizeof(explored) + sum(sys.getsizeof(state) for state in explored)
+
+    print("\nMemory Usage:")
+    print(f"Frontier size: {len(frontier)} states, {frontier_size} bytes")
+    print(f"Explored size: {len(explored)} states, {explored_size} bytes")
+    print(f"Total memory used: {frontier_size + explored_size} bytes\n")
