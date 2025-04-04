@@ -36,8 +36,13 @@ def crear_estado_inicial():
     
     # Distribuimos las 16 fichas en las 6 columnas de forma aleatoria
     for ficha in fichas_disponibles:
+        columnas_disponibles = [idx for idx in columnas_ocupadas if len(columnas[idx]) < 6]
+        
+        if not columnas_disponibles:
+            raise Exception("No hay columnas disponibles con espacio. Esto no debería pasar con 16 fichas.")
         # Elegimos una columna aleatoria que no haya alcanzado el límite de 6 fichas
-        columna_idx = random.choice([col for col in columnas_ocupadas])
+        
+        columna_idx = random.choice(columnas_disponibles)
         columnas[columna_idx].append(ficha)
     
     return columnas
@@ -67,7 +72,7 @@ def busqueda_sin_heuristica(estado_inicial):
     fin = time.time()
     tiempo_total = fin - inicio  # Tiempo transcurrido en segundos
     print(f"Solucion encontrada en {tiempo_total:.4f} segundos:")
-    noHeuristica.print_matrix(solucion_sin_heristica)
+    noHeuristica.print_solution_path(solucion_sin_heristica)
 
 def heuristic_search(initial_state):
     print("\n")

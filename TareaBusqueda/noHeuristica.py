@@ -7,42 +7,59 @@ def print_matrix(current_board):
         print(" ".join(str(cell) if cell is not None else '.' for cell in row))
 
 
+# Función principal de búsqueda con seguimiento del camino
 def search_nonheuristic_solution(initial_state):
-    # Inicializar lista de soluciones exploradas no repetidas
     explored = set()
-    # Inicializar cola de soluciones a explorar
     frontier = deque([initial_state])
+    # Se utiliza para encontrar el camino en caso de encontrar una solución
+    parent_map = {tuple(map(tuple, initial_state)): None}
 
-    # Inicializar n�mero de iteraciones
     iteration = 0
-    # Mientras a frontera no este vacia
     while frontier:
-        # Se toma elemento a la izquierda de la cola
         current_state = frontier.popleft()
 
-        # Impresion de una iteracion cada 500
+        # Impresión de iteraciones
         if iteration % 500 == 0:
             print(f"Iteration: {iteration}")
             print_matrix(current_state)
-            print(iteration)
-        
-        # Se busca si el estado actual es solucion
+
         if is_correct_state(current_state):
-            print("Found it!")
-            return current_state
+            print("Found Solution!\n")
+            solution_path = reconstruct_path(current_state, parent_map)
+            return solution_path
 
-        # Se agrega estado a lista de explorados
         explored.add(tuple(map(tuple, current_state)))
-
-        # Se busca y devuelve los vecinos del estado actual
         neighbors = find_neighbors(current_state)
 
-        # Se busca en los vecinos y si no han sido explorados o no est�n en la frontera, se agregan
-        if neighbors:
-            for neighbor in neighbors:
-                if tuple(map(tuple, neighbor)) not in explored and neighbor not in frontier:
-                    frontier.append(neighbor)
+        for neighbor in neighbors:
+            neighbor_tuple = tuple(map(tuple, neighbor))
+            if neighbor_tuple not in explored and neighbor_tuple not in parent_map:
+                frontier.append(neighbor)
+                parent_map[neighbor_tuple] = tuple(map(tuple, current_state))
+
         iteration += 1
+
+    print("No solution found.")
+    return None
+
+# Función para reconstruir el camino a la solución
+def reconstruct_path(solution_state, parent_map):
+    path = []
+    state = tuple(map(tuple, solution_state))
+
+    while state is not None:
+        path.append(state)
+        state = parent_map[state]
+
+    path.reverse()
+    return path
+
+# Función que imprime todos los pasos de la solución
+def print_solution_path(path):
+    print("Solution Path:")
+    for step_num, state in enumerate(path):
+        print(f"Step {step_num}:")
+        print_matrix(state)
 
 # Funcion para determinar si el estado es correcto
 def is_correct_state(current_state):
@@ -123,9 +140,20 @@ def find_neighbors(resident_state):
     for row1, col1 in valid_empty_cells:
         for row2, col2 in valid_color_cells:
             if col1 != col2:
-                new_state = copy.deepcopy(resident_state)
-                new_state[row1][col1], new_state[row2][col2] = new_state[row2][col2], new_state[row1][col1]
-                neighbors.append(new_state)
+                if valid_columns[col1] == True:
+                    new_state = copy.deepcopy(resident_state)
+                    new_state[row1][col1], new_state[row2][col2] = new_state[row2][col2], new_state[row1][col1]
+                    neighbors.append(new_state)
+                else:
+                    if row1 != 0:
+                        if resident_state[row1 + 1][col1] == resident_state[row2][col2]:
+                            new_state = copy.deepcopy(resident_state)
+                            new_state[row1][col1], new_state[row2][col2] = new_state[row2][col2], new_state[row1][col1]
+                            neighbors.append(new_state)
+                        elif row1 == 5:
+                            new_state = copy.deepcopy(resident_state)
+                            new_state[row1][col1], new_state[row2][col2] = new_state[row2][col2], new_state[row1][col1]
+                            neighbors.append(new_state)
 
     return neighbors
 
