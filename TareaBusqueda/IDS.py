@@ -167,11 +167,10 @@ def ids_con_heuristica(estado_inicial):
       
       # Si encontramos la solución, la devolvemos
       if solucion:
-          print(f"¡Solución encontrada en la profundidad {len(solucion.movimientos)}!")
           return solucion
 
       # Si no se encuentra solución en esta iteración, incrementamos el límite de profundidad
-      print(f"No se encontró solución en el límite {limite}. Nodos explorados: {nodos_visitados_global}")
+      print(f"No se encontró solución en la profundidad {limite}. Nodos explorados: {nodos_visitados_global}")
 
     return None  # No se encontró solución
 
@@ -186,13 +185,16 @@ def busqueda_profundidad_limitada(estado, limite, profundidad=0):
     
     # Si el estado actual es la solución, retornamos los movimientos
     if estado.es_solucion():
-        print(f"¡Solución encontrada! Nodos explorados: {nodos_visitados_global}")
+        print(f"¡Solución encontrada en la profundidad {profundidad}! Nodos explorados: {nodos_visitados_global}")
         return estado
     
     # Si hemos alcanzado el límite de profundidad, retornamos None
-    if profundidad >= limite:
+    if profundidad > limite:
         return None
     
+    if nodos_visitados_global > 100000 : 
+        return None
+
     # Generamos los sucesores
     sucesores = estado.generar_sucesores()
     

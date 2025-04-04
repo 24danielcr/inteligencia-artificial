@@ -92,7 +92,7 @@ def busqueda_ids(estado_inicial):
     tiempo_total = fin - inicio  # Tiempo transcurrido en segundos
     
     if solucion:
-        print(f"{len(solucion.movimientos)} movimientos de la solucion:")
+        print(f"Vea los {len(solucion.movimientos)} movimientos de la solucion:")
         
         # Mostrar los movimientos
         for i, mov in enumerate(solucion.movimientos):
