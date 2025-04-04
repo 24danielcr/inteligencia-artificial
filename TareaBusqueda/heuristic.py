@@ -32,7 +32,7 @@ class OpenList:
   def pop_lowest_cost(self):
     if not self.nodes:
       return None
-    lowest_node = min(self.nodes, key=lambda nd: nd.get_total_cost())
+    lowest_node = min(self.nodes, key=lambda nd: nd.get_total_cost()) # lambda to get the node with lowest cost (priority)
     self.nodes.remove(lowest_node)
     return lowest_node
 

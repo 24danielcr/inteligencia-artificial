@@ -1,3 +1,4 @@
+import tracemalloc
 import time
 import noHeuristica
 import IDS
@@ -76,20 +77,23 @@ def busqueda_sin_heuristica(estado_inicial):
     noHeuristica.print_solution_path(solucion_sin_heristica)
 
 def heuristic_search(initial_state):
+    tracemalloc.start() 
     initial_time = time.time()
     
     solver = AStar()
     solution = solver.search(initial_state)
     
     end_time = time.time()
+    current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    
     print(f"Tiempo total de búsqueda: {end_time - initial_time:.4f} segundos")
+    print(f"Memoria pico usada: {peak / (1024 * 1024):.4f} MB")
     
     if solution:
         print("Solución encontrada")
-        # Cantidad de movimientos
         print("Cantidad de movimientos:", solution.get_cost())
         
-        # Estado final (puedes usar tu función imprimir_estado si gustas)
         print("\nEstado final:")
         imprimir_estado(solution.get_state())
     else:
@@ -153,8 +157,7 @@ def main():
         print("5. Salir")
 
         try:
-            # user_choice = int(input("Seleccione una opcion (1-5): "))
-            user_choice = 2
+            user_choice = int(input("Seleccione una opcion (1-5): "))
             print()
 
             if user_choice == 5:
