@@ -144,7 +144,7 @@ class Estado:
         return sucesores
 
 
-def ids_con_heuristica(estado_inicial, max_nodos=200000):
+def ids_con_heuristica(estado_inicial):
     """
     Implementa un algoritmo IDS con límite inicial basado en heurística
     - La profundidad máxima en cada iteración se basa en la heurística inicial
@@ -163,7 +163,7 @@ def ids_con_heuristica(estado_inicial, max_nodos=200000):
       heuristica = limite_profundidad
       
       # Llamamos a la búsqueda en profundidad limitada por la heuristica
-      solucion = busqueda_profundidad_limitada(estado_inicial, limite, max_nodos)
+      solucion = busqueda_profundidad_limitada(estado_inicial, limite)
       
       # Si encontramos la solución, la devolvemos
       if solucion:
@@ -176,7 +176,7 @@ def ids_con_heuristica(estado_inicial, max_nodos=200000):
 
 
 
-def busqueda_profundidad_limitada(estado, limite, profundidad=1, max_nodos=200000):
+def busqueda_profundidad_limitada(estado, limite, profundidad=0, max_nodos=200000):
     """
     Función recursiva para implementar la búsqueda en profundidad limitada
     """
@@ -193,7 +193,7 @@ def busqueda_profundidad_limitada(estado, limite, profundidad=1, max_nodos=20000
         return estado
     
     # Limite de nodos visitados
-    if nodos_visitados_global > max_nodos : 
+    if nodos_visitados_global > max_nodos :
         return None
 
     # Generamos los sucesores
