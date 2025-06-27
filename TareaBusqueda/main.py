@@ -1,6 +1,8 @@
+import tracemalloc
 import time
 import noHeuristica
 import IDS
+from heuristic import AStar
 
 import random
 
@@ -75,7 +77,28 @@ def busqueda_sin_heuristica(estado_inicial):
     noHeuristica.print_solution_path(solucion_sin_heristica)
 
 def heuristic_search(initial_state):
-    print("\n")
+    tracemalloc.start() 
+    initial_time = time.time()
+    
+    solver = AStar()
+    solution = solver.search(initial_state)
+    
+    end_time = time.time()
+    current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    
+    print(f"Tiempo total de búsqueda: {end_time - initial_time:.4f} segundos")
+    print(f"Memoria pico usada: {peak / (1024 * 1024):.4f} MB")
+    
+    if solution:
+        print("Solución encontrada")
+        print("Cantidad de movimientos:", solution.get_cost())
+        
+        print("\nEstado final:")
+        imprimir_estado(solution.get_state())
+    else:
+        print("No se encontró solución")
+
 
 def busqueda_ids(estado_inicial):
     estado_inicial = IDS.Estado(estado_inicial)
@@ -83,6 +106,9 @@ def busqueda_ids(estado_inicial):
     # Medir el tiempo antes de la búsqueda
     inicio = time.time()
     
+    max_nodos = 200000
+    print(f"Busqueda IDS* ocn limite dado por la heuristica, con limite de nodos explorados de: {max_nodos}.")
+
     # Buscar solución sin límite de tiempo
     solucion = IDS.ids_con_heuristica(estado_inicial)
     
@@ -92,7 +118,7 @@ def busqueda_ids(estado_inicial):
     tiempo_total = fin - inicio  # Tiempo transcurrido en segundos
     
     if solucion:
-        print(f"{len(solucion.movimientos)} movimientos de la solucion:")
+        print(f"Vea los {len(solucion.movimientos)} movimientos de la solucion:")
         
         # Mostrar los movimientos
         for i, mov in enumerate(solucion.movimientos):
@@ -131,13 +157,13 @@ def main():
         print("5. Salir")
 
         try:
-            user_choice = int(input("Seleccione una opcion (1-6): "))
+            user_choice = int(input("Seleccione una opcion (1-5): "))
             print()
 
             if user_choice == 5:
                 salir()
             elif user_choice > 5 or user_choice < 1 :
-                print("Invalid choice, please choose a number between 1 and 6.")
+                print("Invalid choice, please choose a number between 1 and 5.")
 
             print(f"Estado inicial {numero_estado+1}:")
             imprimir_estado(estados_iniciales[numero_estado])   
