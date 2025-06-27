@@ -8,7 +8,7 @@ import numpy as np
 #                             CONFIGURATION
 # ----------------------------------------------------------------------------------
 SR = 22_050
-CLIP_LEN_S = 3
+CLIP_LEN_S = 8
 N_MELS = 128
 HOP_LENGTH = 512
 CLIP_SAMPLES = SR * CLIP_LEN_S
@@ -149,16 +149,36 @@ def process_file(path: Path):
 
     return waveform_to_logmelspec(y, SR)
 
+def denoise_spec(spec_norm: np.ndarray, margin_db: float = 6.0) -> np.ndarray:
+    spec_db = spec_norm * 80.0 - 80.0
 
-def build_cache(audio_dir: Path, cache_dir: Path):
+    noise_floor = np.median(spec_db, axis=1, keepdims=True)
+
+    cleaned_db = np.clip(spec_db - noise_floor - margin_db, -80.0, 0.0)
+
+    return (cleaned_db + 80.0) / 80.0
+
+
+def debug_stats(arr, name):
+    print(f"{name}: min {arr.min():.2f}, max {arr.max():.2f}, "
+          f"mean {arr.mean():.2f}, std {arr.std():.2f}")
+
+
+def build_cache(audio_dir: Path, cache_dir: Path, save_png: bool = True):
     cache_dir.mkdir(parents=True, exist_ok=True)
     spec_paths = []
 
     for ext in ("*.mp3", "*.wav", "*.flac", "*.ogg", "*.m4a"):
         for audio_path in audio_dir.rglob(ext):
             spec = process_file(audio_path)
+            spec = denoise_spec(spec)
             out = cache_dir / (audio_path.stem + ".npy")
             np.save(out, spec)
+            if save_png:
+                import matplotlib.pyplot as plt
+                plt.imsave(out.with_suffix(".png"),
+                           spec,       # dB scale (spec * 80 - 80) -> To undo normalization
+                           origin="lower", cmap="magma", vmin=0, vmax=1) # -> vmin = 80, wmax = 0 if normalization undone
             spec_paths.append(out)
 
     (cache_dir / "manifest.json").write_text(json.dumps([str(p) for p in spec_paths]))
