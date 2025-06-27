@@ -1,0 +1,43 @@
+STRIDENT:
+https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/YDEPUT
+40 dog sounds
+40 chicken sounds
+40 crow sounds
+40 strong rain
+40 strong waves
+40 strong wind
+40 storm
+40 crying baby
+40 sneezing
+40 snoring
+40 door creak
+40 washing machine
+40 vacuum clean
+40 clock alarm
+40 glass breaking
+40 helicopter
+40 chainsaw
+40 siren
+40 car horn
+40 train
+40 church bells
+40 airplane
+40 fireworks
+40 hand saw
+https://freesound.org/search/?q=screech
+40 screech
+NON STRIDENT:
+https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/YDEPUT
+40 chirping birds
+40 pouring water
+https://www.kaggle.com/datasets/irmiot22/fsc22-dataset
+40 birds and forest sounds and water
+40 crickets
+40 footsteps
+40 people talking
+40 whistling/instruments that "whistle"
+40 background enviromnetal noise
+40 rain
+40 campfire
+https://freesound.org/people/newlocknew/packs/35948/ Wind 40
+https://freesound.org/people/ivojesus/packs/16371/ Calm Waves 30
