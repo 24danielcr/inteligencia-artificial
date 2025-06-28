@@ -50,9 +50,14 @@ def audio_a_espectrograma(carpeta_entrada, carpeta_salida, tipo='mel'):
 
 
 if __name__ == "__main__":
+    # Stridents
+    carpeta_audios = "Sounds-Processed/Strident"
+    carpeta_espectros = "Espectrogramas/Strident"
 
-    carpeta_audios = "Sounds/Strident"
-    carpeta_espectros = "Espectrogramas/Stridnet"
+    #audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
 
+    # Non-Stridents
+    carpeta_audios = "Sounds-Processed/Non-Strident"
+    carpeta_espectros = "Espectrogramas/Non-Strident"
 
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
