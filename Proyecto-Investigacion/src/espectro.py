@@ -40,7 +40,7 @@ def audio_a_espectrograma(carpeta_entrada, carpeta_salida, tipo='mel'):
 
             nombre_salida = archivo.stem + '_spectrogram.png'
             ruta_salida = Path(carpeta_salida) / nombre_salida
-            plt.savefig(ruta_salida, bbox_inches='tight', pad_inches=0, dpi=100)
+            plt.savefig(ruta_salida, bbox_inches='tight', pad_inches=0, dpi=50)
             plt.close()
             
         except Exception as e:
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/Strident"
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
 ##------------------------------------------------------------------------------------------------
-'''
+
     carpeta_audios = "Proyecto-Investigacion/Sounds-Processed/test/Non-Strident"
     carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Processed/test/Non-Strident"
 
@@ -89,4 +89,4 @@ if __name__ == "__main__":
     carpeta_audios = "Proyecto-Investigacion/Sounds-Processed/val/Non-Strident"
     carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Processed/val/Non-Strident"
 
-    audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')'''
+    audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
