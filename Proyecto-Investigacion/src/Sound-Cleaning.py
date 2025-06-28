@@ -186,8 +186,8 @@ def build_cache(audio_dir: Path, cache_dir: Path, save_png: bool = True):
 
 
 if __name__ == "__main__":
-    SRC_ROOT = Path("Sounds-Raw").resolve()
-    DST_ROOT = Path("Sounds-Processed").resolve()
+    SRC_ROOT = Path("Proyecto-Investigacion/Sounds-Raw").resolve()
+    DST_ROOT = Path("Proyecto-Investigacion/Sounds-Processed").resolve()
 
     batch_convert(SRC_ROOT, DST_ROOT)
 
