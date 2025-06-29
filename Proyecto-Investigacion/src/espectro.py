@@ -77,6 +77,6 @@ if __name__ == "__main__":
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
 
     carpeta_audios = "Proyecto-Investigacion/Sounds-Raw-Separated/val/Non-Strident"
-    carpeta_espectros = "PProyecto-Investigacion/Espectrogramas/Sounds-Raw/val/Non-Strident"
+    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/val/Non-Strident"
 
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
