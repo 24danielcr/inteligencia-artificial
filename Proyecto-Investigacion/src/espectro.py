@@ -51,42 +51,32 @@ def audio_a_espectrograma(carpeta_entrada, carpeta_salida, tipo='mel'):
 
 if __name__ == "__main__":
     # Stridents
-    carpeta_audios = "Proyecto-Investigacion/Sounds-Raw/Non-Strident"
-    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/Non-Strident"
+    carpeta_audios = "Proyecto-Investigacion/Sounds-Raw-Separated/test/Non-Strident"
+    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/test/Non-Strident"
 
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
 
-    carpeta_audios = "Proyecto-Investigacion/Sounds-Raw/Strident"
-    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/Strident"
-    audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
-##------------------------------------------------------------------------------------------------
-
-    carpeta_audios = "Proyecto-Investigacion/Sounds-Processed/test/Non-Strident"
-    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Processed/test/Non-Strident"
-
-    audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
-
-    carpeta_audios = "Proyecto-Investigacion/Sounds-Processed/test/Strident"
-    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Processed/test/Strident"
-
+    carpeta_audios = "Proyecto-Investigacion/Sounds-Raw-Separated/test/Strident"
+    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/test/Strident"
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
 ##------------------------------------------------------------------------------------------------
-    carpeta_audios = "Proyecto-Investigacion/Sounds-Processed/train/Strident"
-    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Processed/train/Strident"
+
+    carpeta_audios = "Proyecto-Investigacion/Sounds-Raw-Separated/train/Non-Strident"
+    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/train/Non-Strident"
 
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
 
-    carpeta_audios = "Proyecto-Investigacion/Sounds-Processed/train/Non-Strident"
-    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Processed/train/Non-Strident"
+    carpeta_audios = "Proyecto-Investigacion/Sounds-Raw-Separated/train/Strident"
+    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/train/Strident"
 
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
 ##------------------------------------------------------------------------------------------------
-    carpeta_audios = "Proyecto-Investigacion/Sounds-Processed/val/Strident"
-    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Processed/val/Strident"
+    carpeta_audios = "Proyecto-Investigacion/Sounds-Raw-Separated/val/Strident"
+    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Raw/val/Strident"
 
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
 
-    carpeta_audios = "Proyecto-Investigacion/Sounds-Processed/val/Non-Strident"
-    carpeta_espectros = "Proyecto-Investigacion/Espectrogramas/Sounds-Processed/val/Non-Strident"
+    carpeta_audios = "Proyecto-Investigacion/Sounds-Raw-Separated/val/Non-Strident"
+    carpeta_espectros = "PProyecto-Investigacion/Espectrogramas/Sounds-Raw/val/Non-Strident"
 
     audio_a_espectrograma(carpeta_audios, carpeta_espectros, tipo='mel')
