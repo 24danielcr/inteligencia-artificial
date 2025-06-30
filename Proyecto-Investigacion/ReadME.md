@@ -36,13 +36,52 @@ Este proyecto tiene como objetivo el procesamiento, análisis y clasificación d
 - Python 3.7 o superior
 - Bibliotecas principales: `librosa`, `numpy`, `matplotlib`, `scikit-learn`, `tensorflow` (o `keras`), entre otras.
 
-## Ejecución
+## Ejecución Local y Entorno Virtual
+
+### 1. Crear y activar un entorno virtual
+
+En la terminal, navega a la carpeta del proyecto y ejecuta:
+
+```bash
+python3 -m venv venv
+```
+
+Activa el entorno virtual:
+
+- En **Mac/Linux**:
+  ```bash
+  source venv/bin/activate
+  ```
+- En **Windows**:
+  ```bash
+  .\venv\Scripts\activate
+  ```
+
+### 2. Instalar dependencias
+
+Con el entorno virtual activado, instala las dependencias usando el archivo `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+Si necesitas generar el archivo `requirements.txt` desde tu entorno actual, usa:
+
+```bash
+pip freeze > requirements.txt
+```
+
+### 3. Flujo de ejecución recomendado
 
 1. **Preprocesamiento de audios:**  
-   Ejecuta los scripts en `src/Sound-Cleaning.py` para limpiar y preparar los audios.
+   Ejecuta el script `src/Sound-Cleaning.py` para limpiar y preparar los audios.
 
 2. **Generación de espectrogramas:**  
    Usa `src/espectro.py` para convertir los audios en espectrogramas.
 
-3. **Entrenamiento de modelos:**  
+3. **Entrenamiento y evaluación de modelos:**  
    Abre y ejecuta los notebooks en la carpeta `Modelos/` para entrenar y evaluar los modelos de clasificación.
+
+### 4. Uso en Google Colab
+
+Para una experiencia más sencilla y visual, puedes subir los notebooks (`.ipynb`) de la carpeta `Modelos/` a [Google Colab](https://colab.research.google.com/) y ejecutarlos directamente desde ahí, lo que facilita la visualización de resultados y el manejo de dependencias.
