@@ -3,6 +3,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import librosa
 import numpy as np
+import sys
 
 # ----------------------------------------------------------------------------------
 #                             CONFIGURATION
@@ -30,7 +31,6 @@ RND_SEED = 42
 # ----------------------------------------------------------------------------------
 
 def ffmpeg_audio_stream_exists(path: Path) -> bool:
-    """Return True if at least one audio stream is present."""
     cmd = [FFPROBE, "-v", "error", "-select_streams", "a",
            "-show_entries", "stream=codec_type", "-of", "csv=p=0", str(path)]
     r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -38,7 +38,6 @@ def ffmpeg_audio_stream_exists(path: Path) -> bool:
 
 
 def detect_peak_gain(path: Path) -> float:
-    """Gain (in dB) needed to push the file's true‑peak to ≈ –1 dBFS."""
     null = "NUL" if os.name == "nt" else "/dev/null"
     proc = subprocess.run([FFMPEG, "-i", path, "-af", "volumedetect", "-f", "null", null],
                           stderr=subprocess.PIPE, text=True)
@@ -50,7 +49,6 @@ def detect_peak_gain(path: Path) -> float:
 
 
 def convert_to_mp3(src: Path, dst: Path):
-    """Normalise + transcode *src* to MP3 at *dst*."""
     dst.parent.mkdir(parents=True, exist_ok=True)
 
     # Normaliza el audio del volumen
@@ -77,7 +75,6 @@ def convert_to_mp3(src: Path, dst: Path):
 # ----------------------------------------------------------------------------------
 
 def gather_files_by_class(src_root: Path):
-    """Return {class_name: [list of Path]} filtering non‑audio."""
     mapping = {}
     for p in src_root.rglob("*"):
         if p.is_file() and ffmpeg_audio_stream_exists(p):
@@ -192,10 +189,15 @@ if __name__ == "__main__":
 
     batch_convert(SRC_ROOT, DST_ROOT)
 
-    for split in ("train", "val", "test"):
-        build_cache(DST_ROOT / split / "Non-Strident", DST_ROOT / "cache" / split / "Non-Strident")
+    if len(sys.argv) == 2 and sys.argv[1] == "-cache":
+      for split in ("train", "val", "test"):
+          build_cache(DST_ROOT / split / "Non-Strident", DST_ROOT / "cache" / split / "Non-Strident")
 
-    for split in ("train", "val", "test"):
-        build_cache(DST_ROOT / split / "Strident", DST_ROOT / "cache" / split / "Strident")
+      for split in ("train", "val", "test"):
+          build_cache(DST_ROOT / split / "Strident", DST_ROOT / "cache" / split / "Strident")
 
-    print("\nAll done — audio converted & spectrogram cache ready!")
+    print("\nAll done — audio converted") 
+    
+    if len(sys.argv) == 2 and sys.argv[1] == "-cache":
+      print("& spectrogram cache ready!")
+
