@@ -1,6 +1,6 @@
 ﻿import os, random, subprocess, json
 from pathlib import Path
-
+import matplotlib.pyplot as plt
 import librosa
 import numpy as np
 
@@ -53,6 +53,7 @@ def convert_to_mp3(src: Path, dst: Path):
     """Normalise + transcode *src* to MP3 at *dst*."""
     dst.parent.mkdir(parents=True, exist_ok=True)
 
+    # Normaliza el audio del volumen
     if NORMALISE == "loudnorm":
         af = ("loudnorm=I=-16:LRA=11:TP=-1.5:"
               "measured_I=-16:measured_LRA=0:"
@@ -133,7 +134,7 @@ def waveform_to_logmelspec(y, sr, n_mels=N_MELS, hop_length=HOP_LENGTH):
     S_db = librosa.power_to_db(S, ref=np.max)
     return ((S_db + 80) / 80).astype(np.float32)
 
-
+# convert to spectrogram, but return the binary spectrogram
 def process_file(path: Path):
     y, sr = librosa.load(path, sr=None, mono=True)
     if sr != SR:
@@ -149,8 +150,9 @@ def process_file(path: Path):
 
     return waveform_to_logmelspec(y, SR)
 
+# normalize the volume of the audio
 def denoise_spec(spec_norm: np.ndarray, margin_db: float = 6.0) -> np.ndarray:
-    spec_db = spec_norm * 80.0 - 80.0
+    spec_db = spec_norm * 80.0 - 80.0 #convert from binary to decibels
 
     noise_floor = np.median(spec_db, axis=1, keepdims=True)
 
@@ -175,7 +177,6 @@ def build_cache(audio_dir: Path, cache_dir: Path, save_png: bool = True):
             out = cache_dir / (audio_path.stem + ".npy")
             np.save(out, spec)
             if save_png:
-                import matplotlib.pyplot as plt
                 plt.imsave(out.with_suffix(".png"),
                            spec,       # dB scale (spec * 80 - 80) -> To undo normalization
                            origin="lower", cmap="magma", vmin=0, vmax=1) # -> vmin = 80, wmax = 0 if normalization undone
@@ -186,17 +187,15 @@ def build_cache(audio_dir: Path, cache_dir: Path, save_png: bool = True):
 
 
 if __name__ == "__main__":
-    SRC_ROOT = Path("Proyecto-Investigacion/Sounds-Raw").resolve()
-    DST_ROOT = Path("Proyecto-Investigacion/Sounds-Processed").resolve()
+    SRC_ROOT = Path("../Sounds-Raw").resolve()
+    DST_ROOT = Path("../Sounds-Processed").resolve()
 
     batch_convert(SRC_ROOT, DST_ROOT)
 
-    '''
     for split in ("train", "val", "test"):
         build_cache(DST_ROOT / split / "Non-Strident", DST_ROOT / "cache" / split / "Non-Strident")
 
     for split in ("train", "val", "test"):
         build_cache(DST_ROOT / split / "Strident", DST_ROOT / "cache" / split / "Strident")
-    '''
 
     print("\nAll done — audio converted & spectrogram cache ready!")
